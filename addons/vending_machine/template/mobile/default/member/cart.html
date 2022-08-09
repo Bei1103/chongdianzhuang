@@ -1,0 +1,476 @@
+{template '_header'}
+<link rel="stylesheet" type="text/css" href="../addons/vending_machine/template/mobile/default/static/css/coupon.css?v=2.0.0">
+<link rel="stylesheet" type="text/css" href="../addons/vending_machine/template/mobile/default/static/css/coupon-new.css?v=2017030302">
+<style>
+	.yen{border:none;height:0.75rem;width:0.75rem;display:inline-block;background:#ff4753;color:#fff;font-size:0.4rem;line-height:0.8rem;text-align:center;font-style:normal;border-radius:0.75rem;-webkit-border-radius:0.75rem}
+	.order-create-page{top:0;bottom:0;height:100%!important}
+	.order-create-page .fui-list.goods-item .fui-list-inner{height:3.5rem;align-self:center}
+	.order-create-page .fui-list.goods-item .fui-list-angle{height:3.5rem;align-self:center}
+	.order-create-page .fui-list-inner .subtitle{display:block}
+	.fui-header a.back2:before{content:" ";display:inline-block;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);height:0.5rem;width:0.5rem;border-width:0 0 2px 2px;border-color:#666;border-style:solid;position:relative;top:0}
+	.card-list-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;height:100%;background:rgba(0,0,0,0.6);display:none}
+	.card-list-group{position:fixed;bottom:0;left:0;right:0;/*height:70%;*/
+		height:24rem;background:#fff;z-index:1001;display:none}
+	.card-list-modal.in,.card-list-group.in{display:block}
+	.card-list-title{text-align:center;line-height:2.75rem;font-size:0.75rem;color:#333}
+	.card-list-cancel{width:16.75rem;height:2.2rem;display:flex;line-height:2.2rem;margin:0.25rem auto 0;font-size:0.7rem;color:#333;border-radius:0.1rem;justify-content:space-around;box-shadow:0 0 0.25rem #ededed}
+	.card-list-cancel .text{flex:1;padding-left:0.5rem}
+	.card-list-cancel .icon{width:2.25rem;text-align:center}
+	.card-list-cancel .icon i{font-size:1rem;color:#999}
+	.card-list-cancel .icon.activeselect i{color:#ff9245!important}
+	.card-list-content{height:17rem;overflow-y:scroll}
+	.card-list-content .item{width:16.75rem;height:5.55rem;border-radius:0.4rem;margin:0.5rem auto 0;position:relative;overflow:hidden}
+	.card-style-golden{background:-webkit-linear-gradient(left,#c1a167,#e9d5aa);background:-o-linear-gradient(right,#c1a167,#e9d5aa);background:-moz-linear-gradient(right,#c1a167,#e9d5aa);background:linear-gradient(to right,#c1a167,#e9d5aa)}
+	.card-style-erythrine{background:-webkit-linear-gradient(left,#745757,#966d6d);background:-o-linear-gradient(right,#745757,#966d6d);background:-moz-linear-gradient(right,#745757,#966d6d);background:linear-gradient(to right,#745757,#966d6d)}
+	.card-style-gray{background:-webkit-linear-gradient(left,#434247,#7a7985);background:-o-linear-gradient(right,#434247,#7a7985);background:-moz-linear-gradient(right,#434247,#7a7985);background:linear-gradient(to right,#434247,#7a7985)}
+	.card-style-brown{background:-webkit-linear-gradient(left,#736e6c,#978c8c);background:-o-linear-gradient(right,#736e6c,#978c8c);background:-moz-linear-gradient(right,#736e6c,#978c8c);background:linear-gradient(to right,#736e6c,#978c8c)}
+	.card-style-blue{background:-webkit-linear-gradient(left,#576074,#6d7b96);background:-o-linear-gradient(right,#576074,#6d7b96);background:-moz-linear-gradient(right,#576074,#6d7b96);background:linear-gradient(to right,#576074,#6d7b96)}
+	.card-style-black{background:-webkit-linear-gradient(left,#373737,#4a4a4a);background:-o-linear-gradient(right,#373737,#4a4a4a);background:-moz-linear-gradient(right,#373737,#4a4a4a);background:linear-gradient(to right,#373737,#4a4a4a)}
+	.card-list-content .item .iconbg{position:absolute;font-size:5rem;color:#000;opacity:0.1;bottom:-2.7rem;right:-1.1rem}
+	.card-list-content .item .iconselect{width:2.25rem;height:2.25rem;text-align:center;line-height:2.5rem;position:absolute;right:0;z-index:6;font-size:1rem}
+	.card-list-content .item .iconselect i{font-size:0.95rem;color:#fff}
+	.card-list-content .item .iconselect.activeselect i{color:#ff9245!important}
+	.card-list-content .content{width:16.75rem;height:5.55rem;box-sizing:border-box;padding:0.5rem}
+	.card-list-content .content .title{font-size:0.8rem;color:#fff}
+	.card-list-content .content .title i{font-size:0.85rem;margin-right:0.5rem;color:#fff;opacity:0.9}
+	.card-list-content .content .date{font-size:0.65rem;color:#fff;opacity:0.6;margin-top:0.5rem;line-height:1}
+	.card-list-content .content .tip{display:flex;margin-top:0.95rem}
+	.card-list-content .tip .tip-item{display:inline-block;height:1.25rem;line-height:1.25rem;padding:0 0.5rem;border-radius:0.75rem;border:1px solid #fff;margin-right:0.3rem;opacity:0.8;color:#fff;font-size:0.65rem}
+	.fui-loading{width:65%;margin:1.5em auto;line-height:1.6em;font-size:14px;text-align:center;position:relative}
+	.fui-loading.line:before,.fui-loading.empty:before{content:"";position:absolute;top:50%;left:0;right:0;border-top:1px solid #E5E5E5}
+	.fui-loading.line .text,.fui-loading.empty .text{padding:0 0.5rem;background:#f3f3f3;position:relative;text-align:center;z-index:2}
+	.fui-loading.empty{color:#999}
+	.fui-loading .text{display:inline-block;vertical-align:middle}
+	.order-create-page .price .text-default{font-size:.7rem}
+	.order-create-page .price .text-danger{font-size:.7rem}
+	.fui-page.fui-page-current .fui-content{display:none}
+	.subtitle .fui-label.fui-label-danger{font-size: .55rem;margin: 0}
+
+</style>
+
+<div class='fui-page fui-page-current order-create-page'>
+	<div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back2" href="{php echo mobileUrl('')}"></a>
+		</div>
+		<div class="title">购物车</div>
+		<div class="fui-header-right" data-nomenu="true">&nbsp;</div>
+	</div>
+	<div class='fui-content  navbar'>
+		<div class='content-empty' v-if="list.length<=0">
+			<img src="{VENDING_MACHINE_STATIC}images/nogoods.png" style="width: 6rem;margin-bottom: .5rem;"><br/>
+			<p style="color: #999;font-size: .75rem">您的购物车中没有商品哦！</p><!--<br/><a href="{php echo mobileUrl()}"
+                                                                             class='btn btn-sm btn-danger-o external'
+                                                                             style="border-radius: 100px;height: 1.9rem;line-height:1.9rem;width:  7rem;font-size: .75rem">去首页逛逛吧</a>-->
+		</div>
+
+		<div class="fui-list-group" v-if="list.length>0">
+			<div class="fui-list goods-item align-start" v-for="g in list">
+				<div class="fui-list-media">
+					<img class="round" :src="'{$img_pre}'+g.thumb">
+				</div>
+				<div class="fui-list-inner">
+					<div class="subtitle">
+						<span class='fui-label fui-label-danger' v-if="g.seckillinfo&&g.seckillinfo.status==0">{{g.seckillinfo.tag}}</span>
+						<span class='fui-label fui-label-danger' v-if="g.isdiscountprice>0">促销</span>
+						<span class='fui-label fui-label-danger' v-if="g.discountprice>0">会员折扣</span>
+						{{g.title}}
+					</div>
+					<div :class="'isdiscount_'+g.id"
+							 :data-now="g.now_time"
+							 :data-end="g.isdiscount_time"
+							 data-end-label='促销' v-if="g.isdiscount>0">
+						<div class='text-danger' style="font-size: .55rem">
+							促销剩余
+							<span class="day number " >{{timer[g.id].day}} </span><span class="time">天</span>
+							<span class="hour number ">{{timer[g.id].hour}} </span><span class="time">小时</span>
+							<span class="minute number ">{{timer[g.id].minute}} </span><span class="time">分</span>
+							<span class="second number ">{{timer[g.id].second}} </span><span class="time">秒</span>
+						</div>
+					</div>
+					<div class="price">
+						<span class="text-default" v-if="g.realprice==g.price">￥{{parseFloat(g.realprice)}}/{{g.unit}}</span>
+						<span class="text-default" v-if="g.realprice<g.price"><span class="text-danger">￥{{parseFloat(g.realprice)}}</span>(<del>{{parseFloat(g.price)}}</del>)/{{g.unit}}</span>
+						<span class="num" v-if="g.fee_type==1">x {{g.weight}} 克</span>
+						<span class="num" v-if="g.fee_type==0">x {{g.total}} {{g.unit}}</span>
+						<span class="text-danger">￥{{parseFloat(g.totalprice)}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="fui-cell-group" v-if="list.length>0" style="margin-top: 0;border-top:1px solid #ebebeb">
+		<div class="fui-cell">
+			<div class="fui-cell-label" >共<span class='text-danger'> {{list.length}} </span>件商品</div>
+			<div class="fui-cell-info"></div>
+			<div class="fui-cell-remark noremark">共计：&yen; <span class='goodsprice'>{{parseFloat(order.goodsprice)}}</span></div>
+		</div>
+		</div>
+
+		<div class="fui-cell-group" v-if="list.length>0">
+			<div id='coupondiv' class="fui-cell fui-cell-click" v-on:click="bindCoupon" v-if="couponcount>0">
+					<div class='fui-cell-label' style='width:auto;'>优惠券</div>
+					<div class='fui-cell-info' style="text-align: right;padding-right:.5rem">{{coupon.couponname}}</div>
+					<div class='fui-cell-remark'>
+						<img id="couponloading" src="../addons/vending_machine/static/images/loading.gif" style="vertical-align: middle;display: none;" width="20" alt=""/>
+						<div class='badge badge-danger' v-if="couponcount>0">{{couponcount}}</div>
+					<span class='text' v-if="!couponcount">无可用</span>
+				</div>
+			</div>
+
+			<div class="fui-cell" id="deductenough" v-if="order.deductenough>0">
+				<div class="fui-cell-label" style='width:auto' >活动
+					<span style="font-size: .6rem">：单笔满<span id="deductenough_enough">{{parseFloat(order.deductenough_price)}}</span>元立减<span id="deductenough_enoughdeduct">{{parseFloat(order.deductenough)}}</span>
+			</span>
+				</div>
+				<div class="fui-cell-info"></div>
+				<div class="fui-cell-remark noremark">- &yen; <span id='deductenough_money'>{{parseFloat(order.deductenough)}}</span></div>
+			</div>
+
+	<div class="fui-cell" v-if="sale_credit.deductprice>0||order.deductprice>0">
+		<div class="fui-cell-label" style="width: auto;"> <span id="deductcredit_info" class='text-danger'>{{order.deductcredit>0?order.deductcredit:sale_credit.deductcredit}}</span> {$_W['shopset']['trade']['credittext']}可抵扣 <span id="deductcredit_money" class='text-danger'>{{order.deductprice>0?parseFloat(order.deductprice):sale_credit.deductprice}}</span> 元</div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark"><input id="deductcredit" type="checkbox" class="fui-switch fui-switch-small fui-switch-danger pull-right" :checked="order.deductprice>0?'checked':''" v-on:click="use_credit"></div>
+	</div>
+
+	<div class="fui-cell" v-if="sale_credit.deductcredit2>0||order.deductcredit2>0">
+		<div class="fui-cell-label" style="width: auto;">{$_W['shopset']['trade']['moneytext']}可抵扣 <span id='deductcredit2_money' class="text-danger">{{order.deductcredit2>0?parseFloat(order.deductcredit2):sale_credit.deductcredit2}}</span> 元
+		</div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark info"><input id="deductcredit2" type="checkbox"  class="fui-switch fui-switch-small fui-switch-danger pull-right" :checked="order.deductcredit2>0?'checked':''" v-on:click="use_credit2"></div>
+	</div>
+
+</div>
+
+
+<div class="fui-cell-group" v-if="list.length>0">
+	<input type="hidden" id="weight" name='weight' value="{$weight}" />
+	{if !empty($exchangeOrder)}
+	<div class="fui-cell">
+		<div class="fui-cell-label" >兑换券</div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark"><span style="color: red;">- &yen; {php echo number_format($exchangecha,2);}</span></div>
+	</div>
+	{/if}
+
+
+	{if $show_card&&!empty($my_card_list['list'])}
+	<div class="fui-cell" id='selectCard'>
+		<div class='fui-cell-label' style="width: 4.5rem">会员卡优惠</div>
+		<div class="fui-cell-info"></div>
+		<div class='fui-cell-remark'>
+			<img id="cardloading" src="../addons/vending_machine/static/images/loading.gif" style="vertical-align: middle;display: none;" width="20" alt=""/>
+			{if $my_card_list}
+			<div class='badge badge-danger'>{php echo count($my_card_list['list'])}</div>
+			<span class='text-danger'></span>
+			{else}
+			<div class='badge badge-danger'>0</div>
+			<span class='text-danger'>请选择会员卡</span>
+			{/if}
+		</div>
+	</div>
+
+	<div class="fui-cell" id='carddeduct_div' style='display:none'>
+		<div class="fui-cell-label" style='width:auto' id='carddeduct_text' ></div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark">-&yen; <span id="carddeduct_money">0</span></div>
+		<input type="hidden" id='carddiscountprice' class='carddiscountprice'  value="{php echo number_format($carddiscountprice,2)}" />
+	</div>
+	{/if}
+
+
+	{if empty($exchangeOrder) && empty($taskgoodsprice)}
+	{if !$packageid}
+
+
+	{if empty($taskreward)}
+	<!--<div class="fui-cell discount" v-if="order.discountprice>0">
+		<div class="fui-cell-label" style='width:auto' >会员优惠</div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark">-&yen; <span id='showdiscountprice' class='showdiscountprice'>{{order.discountprice}}</span></div>
+	</div>
+
+	<div class="fui-cell isdiscount"  v-if="order.isdiscountprice>0">
+		<div class="fui-cell-label" style='width:auto' >促销优惠</div>
+		<div class="fui-cell-info"></div>
+		<div class="fui-cell-remark noremark">-&yen; <span id='showisdiscountprice' class='showisdiscountprice'>{{order.isdiscountprice}}</span></div>
+	</div>-->
+
+
+
+<!--<div class="fui-cell" id="merch_deductenough" {if !$merch_saleset['merch_showenough']}style='display:none'{/if}>
+<div class="fui-cell-label" style='width:auto' >商户单笔满 <span id="merch_deductenough_enough" class='text-danger'>{php echo number_format($merch_saleset['merch_enoughmoney'],2)}</span> 元立减</div>
+<div class="fui-cell-info"></div>
+<div class="fui-cell-remark noremark">-&yen; <span id='merch_deductenough_money'>{if $merch_saleset['merch_showenough']}{php echo number_format($merch_saleset['merch_enoughdeduct'],2)}{/if}</span></div>
+</div>-->
+
+<!--<div class="fui-cell" id="seckillprice"  {if $seckill_price<=0}style="display: none"{/if}>
+<div class="fui-cell-label" style='width:auto' >秒杀优惠</div>
+<div class="fui-cell-info"></div>
+<div class="fui-cell-remark noremark">-&yen; <span id="seckillprice_money">{php echo number_format($seckill_price,2)}</span></div>
+</div>-->
+
+{/if}
+
+{/if}
+{/if}
+
+
+<div class="fui-cell" id='coupondeduct_div' style='display:none'>
+	<div class="fui-cell-label" style='width:auto' id='coupondeduct_text' ></div>
+	<div class="fui-cell-info"></div>
+	<div class="fui-cell-remark noremark">-&yen; <span id="coupondeduct_money">0</span></div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="fui-navbar order-create-checkout" v-if="list.length>0">
+	<a href="javascript:;" class="nav-item total">
+		<p style="color: #000">
+			关门扣款：<span class="text-danger  bigprice">&yen; <span class="totalprice total-packageid">{{parseFloat(order.price)}}</span></span>
+		</p>
+	</a>
+</div>
+{template '_account'}
+{template 'sale/coupon/util/picker'}
+{if $show_card}
+{template 'membercard/picker'}
+{/if}
+</div>
+<script language='javascript'>
+	require(['vue','core'], function (Vue,core) {
+		var app = new Vue({
+			el: '.fui-page-current',
+			data: {
+				totalprice:{php echo round($totalprice,2)},
+				order:{php echo json_encode($order)}||[],
+				list:{php echo json_encode($order_goods)}||[],
+				timer:[],
+				sale_credit:{php echo json_encode($sale_credit)}||[],
+				merchs:{php echo json_encode($merch_array)}||[],
+				couponcount:{php echo intval($couponcount)},
+				coupon:{php echo json_encode($coupon)}||[]
+			},
+			methods:{
+				wss:function () {
+
+				},
+				set_timer:function (obj) {
+					var myDate = new Date();
+					var now_time=myDate.getTime();
+					if(obj.isdiscount>0){
+						if(obj.isdiscount_time*1000<now_time){//结束
+							location.reload();
+							return;
+						}
+						var lefttime=Math.floor((obj.isdiscount_time*1000-now_time)/1000);
+						obj.day=Math.floor(lefttime/86400);
+						obj.hour=Math.floor((lefttime%86400)/3600);
+						obj.minute=Math.floor((lefttime%3600)/60);
+						obj.second=Math.floor((lefttime%60));
+						Vue.set(this.timer,obj.id,obj);
+						setTimeout(function () {
+							app.set_timer(obj);
+						},1000)
+					}
+				},
+				check_discount:function(){
+					for(i in this.list){
+						var obj=this.list[i];
+						if(obj.isdiscount>0){
+							this.set_timer(obj);
+						}
+					}
+				},
+				bindCoupon:function(e){
+					if ($('#coupondiv').attr('is_open')) {
+						return;
+					}
+					$('#coupondiv').attr('is_open', true);
+					// 异步请求为false
+					$('#couponloading').show();
+					core.json('sale/coupon/util/query', {
+						money: app.order.goodsprice,
+						type: 0,
+						merchs: app.merchs,
+						goods: app.list
+					}, function (rjson) {
+						$('#couponloading').hide();
+						if (rjson.result.coupons) app.couponcount=rjson.result.coupons.length;
+						if (rjson.result.coupons.length > 0 || rjson.result.wxcards.length > 0) {
+							$('#coupondiv').show().find('.badge').html(rjson.result.coupons.length + rjson.result.wxcards.length).show();
+							$('#coupondiv').find('.text').hide();
+							require(['biz/sale/coupon/picker'], function (picker) {
+								picker.show({
+									couponid: app.order.couponid,
+									coupons: rjson.result.coupons,
+									wxcards: rjson.result.wxcards,
+									onClose: function () {
+										$('#coupondiv').removeAttr('is_open');
+									},
+									onCancel: function () {
+										core.json('member/cart/cancel_coupon',{orderid:app.order.id},function(res){
+											if(res.status==1){
+												/*app.order.contype = 0;
+												app.order.couponid = 0;
+												app.order.wxid = 0;
+												app.order.wxcardid = "";
+												app.order.wxcode = "";
+												app.order.couponmerchid = 0;*/
+												$('#coupondiv').find('.fui-cell-label').html('优惠券');
+												$('#coupondiv').find('.fui-cell-info').html('');
+
+												$('#coupondeduct_div').hide();
+												app.order=res.result.order;
+												app.sale_credit=res.result.sale_credit;
+											}else{
+												FoxUI.toast.show(res.result.message);
+											}
+										},false,true);
+									},
+									onSelected: function (data) {
+										app.order.contype = data.contype;
+										if (app.order.contype == 1) {//微信卡券
+											app.order.couponid = 0;
+											app.order.wxid = data.wxid;
+											app.order.wxcardid = data.wxcardid;
+											app.order.wxcode = data.wxcode;
+											app.order.couponmerchid = data.merchid;
+											$('#coupondiv').find('.fui-cell-label').html('已选择');
+											$('#coupondiv').find('.fui-cell-info').html(data.couponname);
+											$('#coupondiv').data(data);
+											$('#coupondeduct_div').hide();
+											//app.refresh_order();
+										} else if (app.order.contype == 2) {//优惠券
+											core.json('member/cart/use_coupon',{id:data.couponid,orderid:app.order.id},function(res){
+												if(res.status==1){
+													/*app.order.couponid = data.couponid;
+													app.order.wxid = 0;
+													app.order.wxcardid = "";
+													app.order.wxcode = "";
+													app.order.couponmerchid = data.merchid;*/
+													$('#coupondiv').find('.fui-cell-label').html('已选择');
+													$('#coupondiv').find('.fui-cell-info').html(data.couponname);
+													$('#coupondiv').data(data);
+
+													$('#coupondeduct_div').hide();
+													app.order=res.result.order;
+													app.sale_credit=res.result.sale_credit;
+												}else{
+													FoxUI.toast.show(res.result.message);
+												}
+											},false,true);
+										} else {//未选
+											app.order.contype = 0;
+											app.order.couponid = 0;
+											app.order.wxid = 0;
+											app.order.wxcardid = "";
+											app.order.wxcode = "";
+											app.order.couponmerchid = 0;
+											$('#coupondiv').find('.fui-cell-label').html('优惠券');
+											$('#coupondiv').find('.fui-cell-info').html('');
+											$('#coupondeduct_div').hide();
+											//app.refresh_order();
+										}
+									}
+								})
+							})
+						} else {
+							FoxUI.toast.show('未找到优惠券!');
+						}
+					}, false, true)
+				},
+				use_credit:function(e){
+					console.log(e);
+					if(e.target.checked){
+						core.json('member/cart/use_credit',{orderid:app.order.id},function(res){
+							if(res.status==1){
+								app.order=res.result.order;
+								app.sale_credit=res.result.sale_credit;
+							}else{
+								FoxUI.toast.show(res.result.message);
+							}
+						},false,true);
+					}else{
+						core.json('member/cart/cancel_credit',{orderid:app.order.id},function(res){
+							if(res.status==1){
+								app.order=res.result.order;
+								app.sale_credit=res.result.sale_credit;
+							}else{
+								FoxUI.toast.show(res.result.message);
+							}
+						},false,true);
+					}
+				},
+				use_credit2:function(e){
+					console.log(e.target.checked);
+					if(e.target.checked){
+						core.json('member/cart/use_credit2',{orderid:app.order.id},function(res){
+							if(res.status==1){
+								app.order=res.result.order;
+								app.sale_credit=res.result.sale_credit;
+							}else{
+								FoxUI.toast.show(res.result.message);
+							}
+						},false,true);
+					}else{
+						core.json('member/cart/cancel_credit2',{orderid:app.order.id},function(res){
+							if(res.status==1){
+								app.order=res.result.order;
+								app.sale_credit=res.result.sale_credit;
+							}else{
+								FoxUI.toast.show(res.result.message);
+							}
+						},false,true);
+					}
+				},
+				refresh_order:function(){
+					//var data={"action":"refresh_order","type":"app","orderid":"{$order['id']}","openid":"{$_W['openid']}","uniacid":{$_W['uniacid']}};
+					//ws.send(JSON.stringify(data));
+				}
+			},
+			created:function () {
+				this.check_discount()
+			}
+		});
+		$('.fui-page.fui-page-current .fui-content,.fui-navbar').show();
+		//连接wss
+		var ws = new WebSocket("wss://"+window.location.host+"/wss");
+		//var ws = new WebSocket("ws://127.0.0.1:8787");//测试
+		ws.onopen = function(evt) {
+			//登录
+			var data={"action":"login","type":"app","pwd":"{php echo md5($_W['mid'])}","openid":"{$_W['openid']}","uniacid":{$_W['uniacid']}};
+			ws.send(JSON.stringify(data));
+		};
+		ws.onmessage = function(evt) {
+			//console.log( "Received Message: " +evt.data);
+			var res=JSON.parse(evt.data);
+			if(res.action=='get_order'&&res.code==1){
+				var data=res.data;
+				app.couponcount=data.couponcount;
+				app.order=data.order;
+				app.list=data.list;
+				app.sale_credit=data.sale_credit;
+				app.merchs=data.merchs;
+				app.check_discount();
+			}else if(res.action=='lock_status'&&res.code==1&&res.data.senid=="{$lock['senid']}"&&res.data.status==0){
+				FoxUI.alert('门锁已锁上，请重新扫码开锁购物！', '提示', function () {
+					core.scan();
+				});
+			}else if(res.action=='door_status'&&res.code==1&&res.data.senid=="{$lock['senid']}"&&res.data.status==0){
+				FoxUI.toast.show('订单结算中...',true, 10000);
+			}else if(res.action=='order_status'&&res.code==1&&res.data.id=="{$order['id']}"&&res.data.status!==0){
+				core.setCookie('order_pay_complete',1);
+				location.href="{php echo mobileUrl('order/pay/success',array('id'=>$order['id']))}";
+			}
+
+		};
+		ws.onclose=function(evt){
+
+		}
+	});
+</script>
+
+{template '_footer'}

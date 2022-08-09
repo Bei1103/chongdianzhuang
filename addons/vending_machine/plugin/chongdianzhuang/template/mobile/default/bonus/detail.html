@@ -1,0 +1,274 @@
+{template '_header'}
+<link href="../addons/vending_machine/static/css/mui.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="../addons/vending_machine/static/css/iconfont.css"/>
+<link rel="stylesheet" type="text/css" href="http://hovertree.com/texiao/mobile/5/hovertreebottom.css" media="all">
+<style>
+    body {font-family: "微软雅黑";background: #fff;}
+    ul {margin: 0;padding: 0;list-style-type: none;}
+    .ymx-lixs {width: 100%;height: 30px;line-height: 30px;text-align: center;background: #f7f7f7;font-size: 13px;color: #666;}
+    .boxs-lixa {width: 95%;height: auto;min-height: 30px;margin: 0 auto;}
+    .om-lies {width: 100%;height: 35px;line-height: 35px;border-bottom: 1px #ddd solid;margin-top: 10px;font-size: 13px;color: #666;}
+    .font-icons {font-size: 20px;}
+    .xsz-boxs li {width: 18%;float: left;margin-left: 1%;margin-right: 1%;text-align: center;padding:5px 8px;border: 1px #f5f5f5 solid;margin-top: 10px;border-radius: 10px;background: #FFD39B;}
+    .xsz-boxs li p {font-size: 18px;color: #333;margin: 0px;}
+    .xsz-boxs li span {color: #666;font-size: 12px;}
+    .clear {clear: both;}
+    .das-boxs {height: 50px;}
+    .foot-boxs {width: 100%;background: #fff;position: fixed;bottom: 0px;height: 50px;border-top: 1px #f3f3f3 solid;}
+    .foot-boxs ul li {float: left;width: 20%;height: 50px;text-align: center;padding-top: 5px;}
+    .icon-lms {font-size: 19px;color: #666}
+    .foot-boxs ul li p {font-size: 13px;}
+    .time-boxs li {width: 23%;height: 55px;float: left;text-align: center;margin-left: 1%;margin-right: 1%;margin-top: 10px;border: 1px #F5F5F5 solid;padding: 8px;border-radius: 10px;}
+    .time-boxs li p {font-size: 16px;color: #333;margin: 0px;}
+    .time-boxs li span {color: #ccc;font-size: 12px;}
+    .has-pos {}
+    .poms-lista li {width: 100%;height: 45px;background: #0062CC;border-bottom: 1px #FF0000 solid;line-height: 45px;}
+    .poms-lista li span {margin-left: 10px;}
+    .font-cofls {font-size: 22px;color: #1afa29;display: inline-block;margin-right: 8px;}
+    .btn-boxs {width: 70%;height: 45px;background: #99ccff;color: #fff;margin: 0 auto;margin-top: 15px;border-radius: 180px;text-align: center;line-height: 45px;font-size: 16px;margin-bottom: 15px;}
+    .has-pos {background: #ddd !important;color: #fff !important;}
+    .has-pos p {color: #fff !important;}
+    .has-pos span {color: #fff !important;}
+    .act-boxs {background: #0eb7ef !important;color: #fff !important;}
+    .act-boxs p {color: #fff !important;}
+    .act-boxs span {color: #fff !important;}
+
+</style>
+
+<div class="ymx-lixs"><?php echo $openid; ?> - <?php echo $id; ?></div>
+
+<form action="" method="post" enctype ="multipart/form-data">
+<div class="boxs-lixa">
+    <div class="om-lies">
+        <span class="iconfont icon-jiadianchatou font-icons"></span> 选择端口
+    </div>
+    <ul class="xsz-boxs">
+        {loop $ports $index $port}
+            <li  data-na="<?php echo sprintf("%02d", $index+1); ?>" data-type="{$port}" class="{if $port}has-pos{else}se-por{/if}">
+                <p name="por"><?php echo sprintf("%02d", $index+1); ?></p><span>{php echo $port==1?"使用中":"空闲中"}</span>
+            </li>
+        {/loop}
+    </ul>
+    <div class="clear"></div>
+</div>
+
+
+
+
+<div class="boxs-lixa">
+    <div class="om-lies">
+        <span class="iconfont icon-zhiyuanxintong_ico_yunhangshichang font-icons"></span> 选择金额
+    </div>
+<!--    <?php if ($rs_device['charge_mode'] == 0) {  //分段计费  ?>-->
+    <ul class="time-boxs">
+        <?php
+            for ($i = 1; $i <= 3; $i++) {
+                ?>
+        <li data-moy="<?php echo bcmul($wxpay_limit, $i, 2); ?>">
+            <p name="money" style="line-height:40px;">¥ <?php echo sprintf("%01.2f", $wxpay_limit * $i); ?></p>
+        </li>
+        <?php
+            }
+            ?>
+    </ul>
+    <div class="clear"></div>
+
+    <div class="clear"></div>
+    <?php } ?>
+</div>
+</form>
+
+
+<div class="boxs-lixa">
+    <div class="om-lies">
+        <span class="iconfont icon-qian font-icons"></span> 支付方式
+    </div>
+    <ul class="mui-table-view mui-table-view-radio">
+        <li class="mui-table-view-cell mui-selected" data-role="0">
+            <a class="mui-navigate-right"><span class="iconfont icon-weixin font-cofls"></span><span class="">微信支付</span></a>
+<!--            <button class="layui-btn" lay-submit="" lay-filter="demo1" name="sub">立即提交<a class="mui-navigate-right"><span class="iconfont icon-weixin font-cofls"></span><span class="">微信支付</span></a></button>-->
+        </li>
+        <li class="mui-table-view-cell" data-role="1">
+            <a class="mui-navigate-right"><span class="iconfont icon-yue font-cofls" style="color:#ff9900;font-size: 26px;position: relative;left:1px;top:2px"></span>余额支付<span style="font-size: 12px"></span></a>
+        </li>
+
+    </ul>
+</div>
+<div class="btn-boxs">立即支付</div>
+
+<div class="bg"></div>
+<div class="hovertreebottom">
+    <nav>
+        <div id="hovertreebottom_ul">
+            <ul class="box">
+                <li>
+                    <a href="javascript:;" class=""><span>支付</span></a>
+                </li>
+                <li>
+                    <a href="{$person}" class="on"><span>个人中心</span></a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+    <div id="hovertreebottom_masklayer" class="masklayer_div on">&nbsp;</div>
+</div>
+<script src="http://hovertree.com/texiao/mobile/5/hovertreebottom.js"></script>
+<script type="text/javascript">
+    hovertreebottom.bindClick(document.getElementById("hovertreebottom_ul").querySelectorAll("li>a"), document.getElementById("hovertreebottom_masklayer"));
+</script>
+<?php if ($rs_claim['sta'] == 0 || $rs_claim['sta'] == 2) { ?>
+<!--<div style="width:100%;height:25px;text-align:center;line-height:25px;font-size:12px;">
+    <a href="send_clam.php?m=<?php /*echo $aid; */?>&device=<?php /*echo $device_num; */?>">认领该设备,每天获取收益</a>
+</div>-->
+<?php } elseif ($rs_claim['sta'] == 1) {
+    } ?>
+<form action="" method="post" class="form-boxs">
+    <input type="hidden" class="axs-boxs" id="port" name="port" value="<?php echo $port_num; ?>" placeholder="端口">
+    <input type="hidden" class="jmxs" id="fee" name="fee" value="" placeholder="支付金额">
+    <input type="hidden" class="boxs" id="pay_type" name="pay_type" value="0" placeholder="支付方式">
+    <input type="hidden" id="device_type" name="device_type" value="<?php echo $device_type; ?>">
+    <input type="hidden" id="device_num" name="device_num" value="<?php echo $device_num; ?>">
+    <input type="hidden" id="openid" name="openid" value="<?php echo $openid; ?>">
+
+</form>
+<div class="das-boxs"></div>
+
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script src="js/mui.min.js"></script>
+<script type="text/javascript">
+    mui.init();
+    var list = document.querySelector(".mui-table-view.mui-table-view-radio");
+    list.addEventListener("selected", function (e) {
+        $(".boxs").val(e.target.dataset.role);
+    });
+    //端口
+    var port_nums = "<?php echo $port_num;?>";
+    if (port_nums == "") {
+        // $('.se-por')[0].onclick=function(){
+        //     mui.alert("请先确认插头是否插在01号插座上！", function () {
+        //         $(".axs-boxs").val('01');
+        //     });
+        //     $(this)
+        //         .addClass("act-boxs")
+        //         .siblings("li")
+        //         .removeClass("act-boxs");
+        // }
+        // $('.se-por')[0].click();
+
+
+        $(".se-por").on("click", function (e) {
+            var a = $(this).index();
+            var kms = $(this).attr("data-na");
+            mui.alert("请先确认插头是否插在" + (kms) + "号插座上！", function () {
+                $(".axs-boxs").val(kms);
+                console.log(kms)
+            });
+            $(this)
+                .addClass("act-boxs")
+                .siblings("li")
+                .removeClass("act-boxs");
+        });
+    } else {
+        var xsz_boxs_li = $(".xsz-boxs li");
+        mui.alert("您已经选择" + port_nums + "号插座！", function () {
+            var iport = parseInt(port_nums);
+            $(xsz_boxs_li[iport]).addClass("act-boxs");
+        });
+    }
+
+    //时间
+    var time_boxs_li = 1;
+    $(".time-boxs li").on("click", function (e) {
+        var kms = $(this).attr("data-moy");
+        var refund=parseInt($(this).data('refund'));
+        if(isNaN(refund)){
+            refund=0;
+        }
+        var user_money = "<?php echo $user_money?>";
+        if (parseFloat(kms) > parseFloat(user_money)) {
+            if(time_boxs_li>1)
+                mui.alert("账户余额不足\n稍后请选择微信在线支付" + kms + "元！", function () { });
+            $(".jmxs").val(kms);
+            $("#refund").val(refund);
+        } else {
+            /*mui.alert("您本次选择支付" + kms + "元！", function () {
+                $(".jmxs").val(kms);
+                $("#refund").val(refund);
+            });*/
+            $(".jmxs").val(kms);
+            $("#refund").val(refund);
+        }
+        $(this).addClass("act-boxs").siblings("li").removeClass("act-boxs");
+        time_boxs_li++;
+    });
+    $(".time-boxs li:last").click();
+
+    $(".btn-boxs").on("click", function () {
+        // var times = $(".jmxs").val();
+        var ports = $(".axs-boxs").val();
+        if (ports == "") {
+            mui.alert("请选择空闲端口！", function () { });
+        }
+        // else if (times == "") {
+        //     mui.alert("请选择充电时长！", function () { });
+        // }
+        else {
+            var pay_type = $(".boxs").val();
+            //微信支付
+            if (pay_type == 0) {
+                console.log(123)
+                alert("支付成功")
+                $(".form-boxs")
+                    // .attr("action", "<?php echo $http_home_url;?>")
+                    .submit();
+            }
+            else if (pay_type == 1) { //余额支付
+                var kms = $("#port").val();
+                var port = $("#port").val();
+                var fee = $("#fee").val();
+                var money = $("#fee").val();
+                var pay_type = $("#pay_type").val();
+                var paytype = $("#pay_type").val();
+                var openid = $("#openid").val();
+                var btnArray = ["否", "是"];
+                mui.confirm("是否确定余额扣款" + fee + "元？", "余额扣款", btnArray, function (e) {
+                    if (e.index == 1) {
+                        var curl = ""
+                        // if(device_type == 9){
+                        //     curl = "jiaheAjax.php"
+                        // }
+                        var inurl='{$post_port}';
+                        var inurl1='{$post_money}';
+                        var inurl2='{$post_paytype}';
+                        $.post(curl, {
+                            ax: "pays",
+                            port: kms,
+                            fee: money,
+                            pay_type: paytype,
+                            openid: openid,
+
+                        }, function (response, status, xhr) {
+
+
+
+                        }, "json"); mui.alert("余额扣款成功\n充电指令已发送！", function () {
+                            // var url = "<?php echo $http_home_url;?>";
+                            //
+                            // window.location.href = url;
+                        });
+                    } else {
+                        mui.alert("您放弃了余额支付！\n欢迎下次使用！", function () {
+                            // var url = "<?php echo $http_home_url;?>";
+                            // location.reload();
+                        });
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+
+
+{template '_footer'}

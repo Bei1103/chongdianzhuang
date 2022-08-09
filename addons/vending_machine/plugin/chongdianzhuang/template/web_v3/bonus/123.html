@@ -1,0 +1,152 @@
+<div class="page-header">
+  当前位置：<span class="text-primary"> 十路充电桩 </span>
+</div>
+<div class="page-content">
+
+
+  <div class="page-toolbar  m-b-sm m-t-sm">
+    <div class="col-sm-5">
+                <span class=''>
+                    {ifp 'abonus.bonus.device'}
+                        <a class='btn btn-primary btn-sm' href="{php echo webUrl('chongdianzhuang/bonus/device')}"><i class='fa fa-plus'></i> 设备入网</a>
+                    {/if}
+                </span>
+    </div>
+
+
+    <form class="layui-form layui-form-pane" action="" method="post">
+      <div class="layui-inline">
+        <label class="layui-form-label" style="padding-left:0px;"><i class="layui-icon" style="font-size: 18px; color: #D3D3D3;margin-right:5px;">&#xe615;</i> 姓名</label>
+        <div class="layui-input-block">
+          <input type="text" name="device_num"   autocomplete="off" class="layui-input" style="width:160px;">
+        </div>
+      </div>
+      <div class="layui-inline">
+        <button class="layui-btn"  type="submit"  lay-submit="" name="sub1">立即搜索</button>
+      </div>
+    </form>
+
+
+    <form class="layui-form layui-form-pane" action="" method="post">
+      <div class="col-sm-6 pull-right">
+        <div class="input-group">
+          <div class="input-group-select">
+            <select name="year" class='form-control'>
+              <option value=''>安装小区</option>
+              {loop $xc_change $notice}
+              <option value="{$notice['notice']}" {if $notice==$_GPC['notice']}selected="selected"{/if}>{$notice['notice']}小区</option>
+              {/loop}
+            </select>
+          </div>
+          <div class="input-group-select">
+            <select name="month" class='form-control'>
+              <option value=''>是否在线</option>
+
+              <option >在线</option>
+              <option >离线</option>
+
+            </select>
+          </div>
+          <!--                    <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="设备单号"/>-->
+          <!--                    <span class="input-group-btn">-->
+          <!--                             <button class="btn btn-primary" type="submit" name="sub1"> 搜索</button>-->
+          <!--                            <button type="submit" name="export" value="1" class="btn btn-success ">导出</button>-->
+
+          <!--                    </span>-->
+
+          <div>
+            <input type="text" name="keyword"  placeholder="设备单号" autocomplete="off" class="form-control input-sm"/>
+            <!--                        <input type="text" name="true_name"   autocomplete="off" class="layui-input" style="width:160px;">-->
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn"  type="submit"  lay-submit="" name="sub1">立即搜索</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<table class="table table-hover  table-responsive ">
+  <thead class="navbar-inner">
+  <tr>
+    <th>ID</th>
+    <th >设备编号</th>
+    <th>终端总数</th>
+    <th >设备状态</th>
+    <th>通信时间</th>
+    <th>入网时间</th>
+    <th>安装小区</th>
+    <th style="width: 155px;">操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  {loop $xc_change $item}
+  <tr>
+    <td><?php echo $item['id']; ?></td>
+    <td><?php echo $item['device_num']; ?></td>
+    <td><?php echo $item['port_count']; ?></td>
+    <td><?php echo $item['port_status']; ?></td>
+
+    <td>wdsd</td>
+    <td><?php echo $item['access_time']; ?></td>
+    <td><?php echo $item['notice']; ?></td>
+    <td width="200px">
+      <a class='btn btn-primary btn-sm' href="?c=site&a=entry&m=vending_machine&do=web&r=chongdianzhuang.bonus.detail&id=<?php echo $item['id']; ?>"><i class='fa fa-plus'></i> 详情</a>
+      <!--                    <a class='btn btn-primary btn-sm' href="{php echo webUrl('chongdianzhuang/bonus/device')}"><i class='fa fa-plus'></i> 删除</a>-->
+      <!--                    <button class='btn1 btn-primary btn-sm'><i class='fa fa-plus'></i> 删除</button>-->
+
+      <a href="?c=site&a=entry&m=vending_machine&do=web&r=chongdianzhuang.bonus.status0&ac=del&id=<?php echo $item['id']; ?>"
+         onclick="return confirm('确认<?php echo $item["product_num"]; ?>删除吗？');return false;" class="layui-btn layui-btn-danger layui-btn-sm">
+      <i class="layui-icon" style="font-size:30px;color:#FFF;">&#xe640;</i>删除
+      </a>
+      <!--                    <a href="?ac=del&fid=<?php echo $k['fid']; ?>&folder=<?php echo $k['folder']; ?>" 删除</a>-->
+    </td>
+
+  </tr>
+  {/loop}
+
+  </tbody>
+  <tfoot></tfoot>
+
+</table>
+<div class='panel panel-default'>
+  <div class='panel-body' style='text-align: center;padding:30px;'>
+    暂时没有任何设备入网!
+  </div>
+</div>
+</div>
+<script language="javascript">
+  $(".btn1").click(function(){
+    $(".dialog").show(100)
+  })
+
+
+
+  require(['bootstrap'],function(){
+    $("[rel=pop]").popover({
+      trigger:'manual',
+      placement : 'left',
+      title : $(this).data('title'),
+      html: 'true',
+      content : $(this).data('content'),
+      animation: false
+    }).on("mouseenter", function () {
+      var _this = this;
+      $(this).popover("show");
+      $(this).siblings(".popover").on("mouseleave", function () {
+        $(_this).popover('hide');
+      });
+    }).on("mouseleave", function () {
+      var _this = this;
+      setTimeout(function () {
+        if (!$(".popover:hover").length) {
+          $(_this).popover("hide")
+        }
+      }, 100);
+    });
+
+
+  });
+
+
+</script>

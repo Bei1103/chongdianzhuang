@@ -1,0 +1,13 @@
+/.idea
+/data
+/composer.json
+/composer.lock
+/vendor
+/cert
+/GatewayWorker
+!/GatewayWorker/Applications/App/controller/
+/payment
+/static/js/dist/area/
+/static/js/dist/highcharts/
+/static/js/dist/jquery/
+
